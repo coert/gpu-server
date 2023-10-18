@@ -1,6 +1,6 @@
 # pull official base image
 FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
-LABEL maintainer="Alpha.One"
+LABEL maintainer="Coert van Gemeren <coert.vangemeren@hu.nl>"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -53,7 +53,7 @@ RUN add-apt-repository ppa:deadsnakes/ppa && \
 
 RUN mkdir -p /root/repo \
     && cd /root/repo \
-    && curl https://storage.googleapis.com/docker_resources/cupti-linux-2019.1.1.1.tar.gz \
+    && wget https://storage.googleapis.com/docker_resources/cupti-linux-2019.1.1.1.tar.gz \
     && tar -xvzf cupti-linux-2019.1.1.1.tar.gz \
     && rm cupti-linux-2019.1.1.1.tar.gz \
     && find "cupti-linux-2019.1.1.1/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
@@ -68,7 +68,7 @@ RUN mkdir -p /root/repo \
     && rm -rf /root/repo/cupti-linux-2019.1.1.1
 
 RUN cd /root/repo \
-    && curl https://storage.googleapis.com/docker_resources/cudnn-linux-x86_64-8.9.5.29_cuda11-archive.tar.xz \
+    && wget https://storage.googleapis.com/docker_resources/cudnn-linux-x86_64-8.9.5.29_cuda11-archive.tar.xz \
     && tar -xvxf cudnn-linux-x86_64-8.9.5.29_cuda11-archive.tar.xz \
     && rm cudnn-linux-x86_64-8.9.5.29_cuda11-archive.tar.xz \
     && find "cudnn-linux-x86_64-8.9.5.29_cuda11-archive/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
@@ -79,8 +79,8 @@ RUN cd /root/repo \
     && rm -rf /root/repo/cudnn-linux-x86_64-8.9.5.29_cuda11-archive
 
 RUN cd /root/repo \
-    && curl https://storage.googleapis.com/docker_resources/TensorRT-8.6.1.6.Linux.x86_64-gnu.cuda-11.8.tar.gz \
-    && /root/repo && tar -xvxf TensorRT-8.6.1.6.Linux.x86_64-gnu.cuda-11.8.tar.gz \
+    && wget https://storage.googleapis.com/docker_resources/TensorRT-8.6.1.6.Linux.x86_64-gnu.cuda-11.8.tar.gz \
+    && tar -xvxf TensorRT-8.6.1.6.Linux.x86_64-gnu.cuda-11.8.tar.gz \
     && rm TensorRT-8.6.1.6.Linux.x86_64-gnu.cuda-11.8.tar.gz \
     && find "TensorRT-8.6.1.6/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
     && find "TensorRT-8.6.1.6/lib/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
@@ -104,7 +104,7 @@ WORKDIR /usr/src/app
 
 ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib64:$LD_LIBRARY_PATH
 RUN cd /root/repo \
-    && curl https://storage.googleapis.com/docker_resources/Video_Codec_SDK_12.1.14.zip \
+    && wget https://storage.googleapis.com/docker_resources/Video_Codec_SDK_12.1.14.zip \
     && unzip Video_Codec_SDK_12.1.14.zip \
     && rm Video_Codec_SDK_12.1.14.zip \
     && cp /root/repo/Video_Codec_SDK_*/Interface/* /usr/local/include/ \
@@ -140,8 +140,16 @@ RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10 \
     && pip3 install --no-cache-dir -r /usr/src/app/requirements.txt \
     && pip3 install --ignore-installed --no-cache-dir -U crcmod
 
+COPY entrypoint.sh /usr/src/app/entrypoint.sh
+RUN chmod +x /usr/src/app/entrypoint.sh
+RUN chown -R spyne:spyne /usr/src/app
+
 USER spyne
 
 ENV LOGO="\\\\e[1m\\\\033[38;2;255;255;228m-------- \\\\e[0m\\\\033[38;2;174;2;0m.d888888P d88888888b. Y888\\\\e[1m\\\\033[38;2;255;255;228m-- \\\\e[0m\\\\033[38;2;174;2;0md88P 888b\\\\e[1m\\\\033[38;2;255;255;228m--- \\\\e[0m\\\\033[38;2;174;2;0m888 d88888888888 \\\\n\\\\e[1m\\\\033[38;2;255;255;228m------ \\\\e[0m\\\\033[38;2;174;2;0md88P\\\\e[1m\\\\033[38;2;255;255;228m- \\\\e[0m\\\\033[38;2;174;2;0mY88P A8888888888b Y888bd88P\\\\e[1m\\\\033[38;2;255;255;228m- \\\\e[0m\\\\033[38;2;174;2;0m8888b\\\\e[1m\\\\033[38;2;255;255;228m-- \\\\e[0m\\\\033[38;2;174;2;0m888 A88888888888 \\\\n\\\\n\\\\e[1m\\\\033[38;2;255;255;228m----- \\\\e[0m\\\\033[38;2;174;2;0m\\\"Y888b.\\\\e[1m\\\\033[38;2;255;255;228m---- \\\\e[0m\\\\033[38;2;174;2;0m888888888P\\\\e[1m\\\\033[38;2;255;255;228m-- \\\\e[0m\\\\033[38;2;174;2;0m8888P\\\\e[1m\\\\033[38;2;255;255;228m--- \\\\e[0m\\\\033[38;2;174;2;0m888Y88b \\\\e[0m\\\\033[38;2;174;2;0m888\\\\e[1m\\\\033[38;2;255;255;228m- \\\\e[0m\\\\033[38;2;174;2;0m888888 \\\\n\\\\e[1m\\\\033[38;2;255;255;228m------ \\\\e[0m\\\\033[38;2;174;2;0m\\\"Y888b.\\\\e[1m\\\\033[38;2;255;255;228m-- \\\\e[0m\\\\033[38;2;174;2;0m8888888P\\\"\\\\e[1m\\\\033[38;2;255;255;228m--- \\\\e[0m\\\\033[38;2;174;2;0m8888\\\\e[1m\\\\033[38;2;255;255;228m---- \\\\e[0m\\\\033[38;2;174;2;0m888 Y88b888 \\\\e[1m\\\\033[38;2;255;255;228m- \\\\e[0m\\\\033[38;2;174;2;0m888888 \\\\n\\\\e[1m\\\\033[38;2;255;255;228m------- \\\\e[0m\\\\033[38;2;174;2;0md8888\\\\e[1m\\\\033[38;2;255;255;228m-- \\\\e[0m\\\\033[38;2;174;2;0m888\\\\e[1m\\\\033[38;2;255;255;228m--------- \\\\e[0m\\\\033[38;2;174;2;0m8888\\\\e[1m\\\\033[38;2;255;255;228m---- \\\\e[0m\\\\033[38;2;174;2;0m888\\\\e[1m\\\\033[38;2;255;255;228m- \\\\e[0m\\\\033[38;2;174;2;0mY88888\\\\e[1m\\\\033[38;2;255;255;228m-- \\\\e[0m\\\\033[38;2;174;2;0m888 \\\\n\\\\e[1m\\\\033[38;2;255;255;228m-- \\\\e[0m\\\\033[38;2;174;2;0m88888888P\\\\e[1m\\\\033[38;2;255;255;228m-- \\\\e[0m\\\\033[38;2;174;2;0m888\\\\e[1m\\\\033[38;2;255;255;228m--------- \\\\e[0m\\\\033[38;2;174;2;0m8888\\\\e[1m\\\\033[38;2;255;255;228m---- \\\\e[0m\\\\033[38;2;174;2;0m888\\\\e[1m\\\\033[38;2;255;255;228m-- \\\\e[0m\\\\033[38;2;174;2;0mY8888 \\\\e[1m\\\\033[38;2;255;255;228m- \\\\e[0m\\\\033[38;2;174;2;0m8888888888 \\\\n\\\\e[1m\\\\033[38;2;255;255;228m- \\\\e[0m\\\\033[38;2;174;2;0m8Y8888P\\\"\\\\e[1m\\\\033[38;2;255;255;228m--- \\\\e[0m\\\\033[38;2;174;2;0m888\\\\e[1m\\\\033[38;2;255;255;228m--------- \\\\e[0m\\\\033[38;2;174;2;0m8888\\\\e[1m\\\\033[38;2;255;255;228m---- \\\\e[0m\\\\033[38;2;174;2;0m888\\\\e[1m\\\\033[38;2;255;255;228m--- \\\\e[0m\\\\033[38;2;174;2;0mY888\\\\e[1m\\\\033[38;2;255;255;228m-- \\\\e[0m\\\\033[38;2;174;2;0m888888888\\e[1m\\033[38;2;12;255;12mv4-GPU \\\\n"
 
-ENTRYPOINT ["/usr/src/app/entrypoint-proc_gpu.sh"]
+RUN echo "echo -e \"${LOGO}\"\n$(cat /home/spyne/.bashrc)" > /home/spyne/.bashrc \
+    && sed -i "s/\#force_color_prompt=yes/force_color_prompt=yes/g" /home/spyne/.bashrc \
+    && echo "export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/cuda/lib64:${LD_LIBRARY_PATH}" /home/spyne/.bashrc
+
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
