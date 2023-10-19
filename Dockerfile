@@ -21,7 +21,7 @@ ENV CLOUDSDK_PYTHON=python3
 # set work directory
 WORKDIR /root
 
-RUN add-apt-repository ppa:deadsnakes/ppa && \
+RUN add-apt-repository -y ppa:deadsnakes/ppa && \
     apt update && apt upgrade -y && \
     apt install -y --no-install-recommends python3 ipython3 \
     python2-minimal python2.7 python2.7-dev \
