@@ -93,7 +93,7 @@ RUN cd /root/repo \
 
 RUN lsb_release_codename=$(lsb_release -c -s) && export RELEASE="$lsb_release_codename"
 ENV GCSFUSE_REPO="gcsfuse-$RELEASE"
-RUN echo $GCSFUSE_REPO && lsb_release_codename=$(lsb_release -c -s) && export GCSFUSE_REPO="gcsfuse-$lsb_release_codename" \
+RUN lsb_release_codename=$(lsb_release -c -s) && export GCSFUSE_REPO="gcsfuse-$lsb_release_codename" \
     && echo "deb https://packages.cloud.google.com/apt ${GCSFUSE_REPO} main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list \
     && echo "deb [signed-by=/usr/share/keyrings/cloud.google.asc] http://packages.cloud.google.com/apt cloud-sdk main" \
     | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
