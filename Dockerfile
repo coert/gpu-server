@@ -1,5 +1,5 @@
 # pull official base image
-FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
+FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu20.04
 LABEL maintainer="Coert van Gemeren <coert.vangemeren@hu.nl>"
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -25,11 +25,12 @@ RUN add-apt-repository ppa:deadsnakes/ppa && \
     apt update && apt upgrade -y && \
     apt install -y --no-install-recommends python3 ipython3 \
     python2-minimal python2.7 python2.7-dev \
-    python3.10 python3.10-dev python3-numpy \
-    python3-setuptools python3-lxml python3.10-venv python3-pip \
+    python3.10 python3.10-dev python3-apt python3.10-distutils python3.10-venv \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10 \
     && update-alternatives --install /usr/bin/python2 python2 /usr/bin/python2.7 2 \
+    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 8 \
     && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 10 \
+    && update-alternatives --set python3 /usr/bin/python3.8 \
     && apt update -y && apt install -y --no-install-recommends \
     gnupg autoconf bash-completion build-essential caca-utils flite1-dev gcc gfortran \
     git ladspa-sdk lame libasound2-dev libatlas-base-dev libavcodec-dev libavformat-dev \
@@ -47,7 +48,7 @@ RUN add-apt-repository ppa:deadsnakes/ppa && \
     apt-transport-https ca-certificates \
     cuda-libraries-11-8 cuda-tools-11-8 cuda-toolkit-11-8 \
     libmp3lame-dev libfdk-aac-dev libopus-dev libflac-dev libx264-dev libx265-dev libvpx-dev libass-dev libvorbis-dev \
-    automake git-core libfreetype6-dev meson ninja-build texinfo zlib1g-dev libdav1d-dev nasm \
+    automake git-core libfreetype6-dev meson ninja-build texinfo zlib1g-dev nasm \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -126,7 +127,7 @@ RUN git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg_src \
     --enable-cuda-nvcc --enable-cuvid --enable-nvdec --enable-nvenc --enable-libnpp \
     --enable-gpl --enable-gnutls --enable-libfreetype \
     --enable-libass --enable-libfdk-aac --enable-libmp3lame --enable-libopus \
-    --enable-libdav1d --enable-libvorbis --enable-libvpx \
+    --enable-libvorbis --enable-libvpx \
     --enable-libx264 --enable-libx265 \
     --enable-nonfree --disable-static --enable-shared --enable-optimizations \
     > configure.log 2>&1 || (cat configure.log && exit 1) \
@@ -135,8 +136,11 @@ RUN git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg_src \
     && rm -rf Video_Codec_SDK_12.1.14 \
     && rm -rf ffmpeg_src
 
+ENV PATH="/opt/venv/bin:$PATH"
+
 COPY requirements.txt /usr/src/app/requirements.txt
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10 \
+    && python3.10 -m venv /opt/venv \
     && pip3 install --no-cache-dir -r /usr/src/app/requirements.txt \
     && pip3 install --ignore-installed --no-cache-dir -U crcmod
 
