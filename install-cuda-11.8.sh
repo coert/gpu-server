@@ -8,14 +8,14 @@ cd ${INSTALL_LOCATION}
 
 # apt autoremove -y nvidia* --purge
 NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-520.61.05.run" \
-    && wget https://us.download.nvidia.com/tesla/520.61.05/${NVIDIA_DRIVER_INSTALLER}
-    && chmod +x ${NVIDIA_DRIVER_INSTALLER}
+    && wget https://us.download.nvidia.com/tesla/520.61.05/${NVIDIA_DRIVER_INSTALLER} \
+    && chmod +x ${NVIDIA_DRIVER_INSTALLER} \
     && ./${NVIDIA_DRIVER_INSTALLER} --no-questions --ui=none
 
 apt update && apt upgrade -y \
     && apt install -y --no-install-recommends linux-headers-$(uname -r) curl wget nano \
-    htop software-properties-common apt-utils git git-core screen unzip && \
-    add-apt-repository -y ppa:graphics-drivers/ppa
+    htop software-properties-common apt-utils git git-core screen unzip \
+    && add-apt-repository -y ppa:graphics-drivers/ppa
 
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin \
     && mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600 \
