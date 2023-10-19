@@ -2,6 +2,22 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
+INSTALL_LOCATION=/opt/nvidia_install
+mkdir ${INSTALL_LOCATION}
+cd ${INSTALL_LOCATION}
+
+# apt autoremove -y nvidia* --purge
+NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-520.61.05.run"
+wget https://us.download.nvidia.com/tesla/520.61.05/${NVIDIA_DRIVER_INSTALLER}
+chmod +x ${NVIDIA_DRIVER_INSTALLER}
+./${NVIDIA_DRIVER_INSTALLER} --no-questions --ui=none
+
+# wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
+# mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
+# wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda-repo-ubuntu2204-11-8-local_11.8.0-520.61.05-1_amd64.deb
+# dpkg -i cuda-repo-ubuntu2204-11-8-local_11.8.0-520.61.05-1_amd64.deb
+# cp /var/cuda-repo-ubuntu2204-11-8-local/cuda-*-keyring.gpg /usr/share/keyrings/
+
 apt update && apt upgrade -y \
     && apt install -y --no-install-recommends linux-headers-$(uname -r) curl wget nano \
     software-properties-common apt-utils && \
@@ -34,16 +50,11 @@ add-apt-repository ppa:deadsnakes/ppa && \
     libzmq3-dev libzvbi-dev lv2-dev opencl-headers openexr pkg-config qttools5-dev qttools5-dev-tools \
     screen unzip libeigen3-dev liblapack-dev cmake libopencv-dev htop \
     apt-transport-https ca-certificates \
-    cuda-libraries-11-8 cuda-tools-11-8 cuda-toolkit-11-8 \
+    cuda cuda-libraries-11-8 cuda-tools-11-8 cuda-toolkit-11-8 \
     libmp3lame-dev libfdk-aac-dev libopus-dev libflac-dev libx264-dev libx265-dev libvpx-dev libass-dev libvorbis-dev \
     automake git-core libfreetype6-dev meson ninja-build texinfo zlib1g-dev yasm nasm \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-INSTALL_LOCATION=/opt/nvidia_install
-
-mkdir ${INSTALL_LOCATION}
-cd ${INSTALL_LOCATION}
 
 CUDA_11_INSTALLER="cuda_11.8.0_520.61.05_linux.run" \
 wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/${CUDA_11_INSTALLER} \
@@ -85,6 +96,9 @@ wget https://storage.googleapis.com/docker_resources/${TENSORRT}.Linux.x86_64-gn
     && find "${TENSORRT}/bin/" -type f -exec cp -P {} /usr/local/cuda/bin/ \; \
     && chmod a+r /usr/local/cuda/include/*.h /usr/local/cuda/lib64/* \
     && rm -rf ${TENSORRT}
+
+/usr/bin/nvidia-persistenced --verbose
+crontab -l | { cat; echo "@reboot /usr/bin/nvidia-persistenced --verbose"; } | crontab -
 
 lsb_release_codename=$(lsb_release -c -s) 
 GCSFUSE_REPO="gcsfuse-$lsb_release_codename"
