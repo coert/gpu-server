@@ -2,24 +2,25 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
+PWD=$(pwd)
 INSTALL_LOCATION=/opt/nvidia_install
 mkdir ${INSTALL_LOCATION}
 cd ${INSTALL_LOCATION}
-
-# apt autoremove -y nvidia* --purge
-NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-520.61.05.run" \
-    && wget https://us.download.nvidia.com/tesla/520.61.05/${NVIDIA_DRIVER_INSTALLER} \
-    && chmod +x ${NVIDIA_DRIVER_INSTALLER} \
-    && ./${NVIDIA_DRIVER_INSTALLER} --no-questions --ui=none
 
 apt update && apt upgrade -y \
     && apt install -y --no-install-recommends linux-headers-$(uname -r) curl wget nano \
     htop software-properties-common apt-utils git git-core screen unzip \
     && add-apt-repository -y ppa:graphics-drivers/ppa
 
-wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin \
+NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-520.61.05.run" \
+    && wget -nv https://us.download.nvidia.com/tesla/520.61.05/${NVIDIA_DRIVER_INSTALLER} \
+    && chmod +x ${NVIDIA_DRIVER_INSTALLER} \
+    && ./${NVIDIA_DRIVER_INSTALLER} --no-questions --ui=none \
+    && modprobe nvidia
+
+wget -nv https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin \
     && mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600 \
-    && wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda-repo-ubuntu2204-11-8-local_11.8.0-520.61.05-1_amd64.deb \
+    && wget -nv https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda-repo-ubuntu2204-11-8-local_11.8.0-520.61.05-1_amd64.deb \
     && dpkg -i cuda-repo-ubuntu2204-11-8-local_11.8.0-520.61.05-1_amd64.deb \
     && cp /var/cuda-repo-ubuntu2204-11-8-local/cuda-*-keyring.gpg /usr/share/keyrings/
 
@@ -55,13 +56,13 @@ add-apt-repository -y ppa:deadsnakes/ppa && \
     && rm -rf /var/lib/apt/lists/*
 
 # CUDA_11_INSTALLER="cuda_11.8.0_520.61.05_linux.run" \
-#     && wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/${CUDA_11_INSTALLER} \
+#     && wget -nv https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/${CUDA_11_INSTALLER} \
 #     && chmod +x ${CUDA_11_INSTALLER} \
 #     && "./${CUDA_11_INSTALLER}" --silent --toolkit --no-drm \
 #     && update-alternatives --install /usr/local/cuda cuda /usr/local/cuda-11.8 118
 
 CUPTI="cupti-linux-2019.1.1.1" \
-    && wget https://storage.googleapis.com/docker_resources/${CUPTI}.tar.gz \
+    && wget -nv https://storage.googleapis.com/docker_resources/${CUPTI}.tar.gz \
     && tar xvzf ${CUPTI}.tar.gz \
     && rm ${CUPTI}.tar.gz \
     && find "${CUPTI}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
@@ -76,7 +77,7 @@ CUPTI="cupti-linux-2019.1.1.1" \
     && rm -rf ${CUPTI}
 
 CUDNN="cudnn-linux-x86_64-8.9.5.29_cuda11-archive" \
-    && wget https://storage.googleapis.com/docker_resources/${CUDNN}.tar.xz \
+    && wget -nv https://storage.googleapis.com/docker_resources/${CUDNN}.tar.xz \
     && tar xvf "${CUDNN}.tar.xz" \
     && rm "${CUDNN}.tar.xz" \
     && find "${CUDNN}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
@@ -86,7 +87,7 @@ CUDNN="cudnn-linux-x86_64-8.9.5.29_cuda11-archive" \
     && rm -rf ${CUDNN}
     
 TENSORRT="TensorRT-8.6.1.6" \
-    && wget https://storage.googleapis.com/docker_resources/${TENSORRT}.Linux.x86_64-gnu.cuda-11.8.tar.gz \
+    && wget -nv https://storage.googleapis.com/docker_resources/${TENSORRT}.Linux.x86_64-gnu.cuda-11.8.tar.gz \
     && tar xvxf ${TENSORRT}.Linux.x86_64-gnu.cuda-11.8.tar.gz \
     && rm ${TENSORRT}.Linux.x86_64-gnu.cuda-11.8.tar.gz \
     && find "${TENSORRT}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
@@ -97,7 +98,7 @@ TENSORRT="TensorRT-8.6.1.6" \
     && rm -rf ${TENSORRT}
 
 VIDEO_CODEC="Video_Codec_SDK_12.1.14" \
-    && wget https://storage.googleapis.com/docker_resources/${VIDEO_CODEC}.zip \
+    && wget -nv https://storage.googleapis.com/docker_resources/${VIDEO_CODEC}.zip \
     && unzip -o ${VIDEO_CODEC}.zip \
     && rm ${VIDEO_CODEC}.zip \
     && cp Video_Codec_SDK_*/Interface/* /usr/local/include/ \
@@ -109,8 +110,8 @@ git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
     && cd - \
     && rm -rf nv-codec-headers
 
-/usr/bin/nvidia-persistenced --verbose
-crontab -l | { cat; echo "@reboot /usr/bin/nvidia-persistenced --verbose"; } | crontab -
+# /usr/bin/nvidia-persistenced --verbose
+# crontab -l | { cat; echo "@reboot /usr/bin/nvidia-persistenced --verbose"; } | crontab -
 
 lsb_release_codename=$(lsb_release -c -s) && GCSFUSE_REPO="gcsfuse-$lsb_release_codename" \
     && echo "deb https://packages.cloud.google.com/apt ${GCSFUSE_REPO} main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list \
@@ -124,7 +125,7 @@ export PATH="/usr/local/cuda/bin:${HOME}/bin:${HOME}/.local/bin:${PATH}"
 
 git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg_src \
     && cd ffmpeg_src \
-    ./configure \
+    && ./configure \
     --pkg-config-flags="--static" \
     --extra-cflags=-I/usr/local/cuda/include \
     --extra-ldflags=-L/usr/local/cuda/lib64 \
@@ -160,6 +161,7 @@ KEYRING_DIR=${HOME}/.config/python_keyring \
 default-keyring=keyring.backends.fail.Keyring
 EOT
 
+cd ${PWD}
 curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10 \
     && python3.10 -m venv /opt/venv \
     && curl -sSL https://install.python-poetry.org | python3.10 -
