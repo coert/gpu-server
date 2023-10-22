@@ -161,15 +161,15 @@ KEYRING_DIR=${HOME}/.config/python_keyring \
 default-keyring=keyring.backends.fail.Keyring
 EOT
 
-cd ${PWD}
-curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10 \
-    && python3.10 -m venv /opt/venv \
-    && curl -sSL https://install.python-poetry.org | python3.10 -
+# cd ${PWD}
+# curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10 \
+#     && python3.10 -m venv /opt/venv \
+#     && curl -sSL https://install.python-poetry.org | python3.10 -
 
-POETRY=poetry
-RFILE="requirements.txt"
-${POETRY} export -f ${RFILE} --output ${RFILE} --with torch --with google --without dev \
-    || err "Unable to export ${RFILE}"
+# POETRY=poetry
+# RFILE="requirements.txt"
+# ${POETRY} export -f ${RFILE} --output ${RFILE} --with torch --with google --without dev \
+#     || err "Unable to export ${RFILE}"
 
-pip3 install --no-cache-dir -r requirements.txt \
-    && pip3 install --ignore-installed --no-cache-dir -U crcmod
+# pip3 install --no-cache-dir -r requirements.txt \
+#     && pip3 install --ignore-installed --no-cache-dir -U crcmod
