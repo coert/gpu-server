@@ -145,7 +145,7 @@ git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg_src \
 bash -c "cat <<'EOT' >> /etc/profile
 
 export PATH=\${HOME}/.local/bin:/usr/local/cuda/bin:/usr/local/cuda/TensorRT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:
-export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/usr/lib:/usr/local/cuda/targets/x86_64-linux/lib:
+export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/usr/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs:
 
 if [[ -f \${HOME}/.ssh/id_rsa ]]; then
   HOST=\${HOSTNAME}
