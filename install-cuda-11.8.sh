@@ -2,7 +2,8 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-PWD=$(pwd)
+cp ./pyproject.toml /opt/pyproject.toml
+
 INSTALL_LOCATION=/opt/nvidia_install
 mkdir ${INSTALL_LOCATION}
 cd ${INSTALL_LOCATION}
@@ -15,29 +16,20 @@ apt-get remove --purge nvidia-driver-* -y \
 apt update && apt upgrade -y \
     && apt install -y --no-install-recommends linux-headers-$(uname -r) curl wget nano \
     htop software-properties-common apt-utils git git-core screen unzip
-    # && add-apt-repository -y ppa:graphics-drivers/ppa
 
-NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-520.61.05.run" \
-    && wget -nv https://us.download.nvidia.com/tesla/520.61.05/${NVIDIA_DRIVER_INSTALLER} \
+NVIDIA_DRIVER_VERSION="535.54.03" \
+    && NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-${NVIDIA_DRIVER_VERSION}.run" \
+    && wget -nv https://us.download.nvidia.com/tesla/${NVIDIA_DRIVER_VERSION}/${NVIDIA_DRIVER_INSTALLER} \
     && chmod +x ${NVIDIA_DRIVER_INSTALLER} \
     && ./${NVIDIA_DRIVER_INSTALLER} --no-questions --ui=none \
-    && modprobe nvidia
 
-CUDA_11_INSTALLER="cuda_11.8.0_520.61.05_linux.run" \
-    && wget -nv https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/${CUDA_11_INSTALLER} \
-    && chmod +x ${CUDA_11_INSTALLER} \
-    && "./${CUDA_11_INSTALLER}" --silent --toolkit --no-drm \
-    && update-alternatives --install /usr/local/cuda cuda /usr/local/cuda-11.8 118
-
-# distribution=$(. /etc/os-release;echo $ID$VERSION_ID | sed -e 's/\.//g') \
-#     && wget -nv https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/cuda-keyring_1.0-1_all.deb \
-#     && dpkg -i cuda-keyring_1.0-1_all.deb \
-#     && apt update && apt install -y --no-install-recommends cuda-drivers-520 \
-#     && wget -nv https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/cuda-$distribution.pin \
-#     && mv cuda-$distribution.pin /etc/apt/preferences.d/cuda-repository-pin-600 \
-#     && wget -nv https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda-repo-$distribution-11-8-local_11.8.0-520.61.05-1_amd64.deb \
-#     && dpkg -i cuda-repo-$distribution-11-8-local_11.8.0-520.61.05-1_amd64.deb \
-#     && cp /var/cuda-repo-$distribution-11-8-local/cuda-*-keyring.gpg /usr/share/keyrings/
+CUDA_VERSION="12.2.0" \
+    && cuda_string=$(echo $CUDA_VERSION|sed -e 's/\.//g') \
+    && CUDA_INSTALLER="cuda_${CUDA_VERSION}_${NVIDIA_DRIVER_VERSION}_linux.run" \
+    && wget -nv https://developer.download.nvidia.com/compute/cuda/${CUDA_VERSION}/local_installers/${CUDA_INSTALLER} \
+    && chmod +x ${CUDA_INSTALLER} \
+    && "./${CUDA_INSTALLER}" --silent --toolkit --no-drm \
+    && update-alternatives --install /usr/local/cuda cuda /usr/local/cuda-${cuda_string} ${cuda_string}
 
 add-apt-repository -y ppa:deadsnakes/ppa && \
     apt update && apt upgrade -y && apt install -y --no-install-recommends python3 ipython3 \
@@ -68,8 +60,6 @@ add-apt-repository -y ppa:deadsnakes/ppa && \
     libfreetype6-dev meson ninja-build texinfo zlib1g-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-    # cuda-11-8 cuda-libraries-11-8 cuda-tools-11-8 cuda-toolkit-11-8 \
 
 CUPTI="cupti-linux-2019.1.1.1" \
     && wget -nv https://storage.googleapis.com/docker_resources/${CUPTI}.tar.gz \
@@ -120,8 +110,7 @@ git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
     && cd - \
     && rm -rf nv-codec-headers
 
-# /usr/bin/nvidia-persistenced --verbose
-# crontab -l | { cat; echo "@reboot /usr/bin/nvidia-persistenced --verbose"; } | crontab -
+crontab -l | { cat; echo "@reboot /usr/bin/nvidia-persistenced --verbose"; } | crontab -
 
 lsb_release_codename=$(lsb_release -c -s) && GCSFUSE_REPO="gcsfuse-$lsb_release_codename" \
     && echo "deb https://packages.cloud.google.com/apt ${GCSFUSE_REPO} main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list \
@@ -155,7 +144,7 @@ git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg_src \
 bash -c "cat <<'EOT' >> /etc/profile
 
 export PATH=\${HOME}/.local/bin:/usr/local/cuda/bin:/usr/local/cuda/TensorRT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:
-export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/usr/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs:
+export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/cuda/lib64:/usr/lib/x86_64-linux-gnu:/usr/lib:
 
 if [[ -f \${HOME}/.ssh/id_rsa ]]; then
   HOST=\${HOSTNAME}
@@ -176,6 +165,10 @@ EOT
 #     && python3.10 -m venv /opt/venv \
 #     && curl -sSL https://install.python-poetry.org | python3.10 -
 
+curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
+curl -sSL https://install.python-poetry.org | python3.10 -
+snap install nvtop
+
 # POETRY=poetry
 # RFILE="requirements.txt"
 # ${POETRY} export -f ${RFILE} --output ${RFILE} --with torch --with google --without dev \
@@ -183,3 +176,7 @@ EOT
 
 # pip3 install --no-cache-dir -r requirements.txt \
 #     && pip3 install --ignore-installed --no-cache-dir -U crcmod
+
+rm -rf ${INSTALL_LOCATION}
+
+reboot 0
