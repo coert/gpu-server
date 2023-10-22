@@ -81,7 +81,8 @@ CUPTI="cupti-linux-2019.1.1.1" \
     && chmod a+r /usr/local/cuda/include/*.h /usr/local/cuda/lib64/libcupti* /usr/local/cuda/lib64/libnvperf* \
     && rm -rf ${CUPTI}
 
-CUDNN="cudnn-linux-x86_64-8.9.5.29_cuda11-archive" \
+# CUDNN="cudnn-linux-x86_64-8.9.5.29_cuda11-archive" \
+CUDNN="cudnn-linux-x86_64-8.9.5.29_cuda12-archive" \
     && wget -nv https://storage.googleapis.com/docker_resources/${CUDNN}.tar.xz \
     && tar xvf "${CUDNN}.tar.xz" \
     && rm "${CUDNN}.tar.xz" \
@@ -91,8 +92,10 @@ CUDNN="cudnn-linux-x86_64-8.9.5.29_cuda11-archive" \
     && chmod a+r /usr/local/cuda/include/*.h /usr/local/cuda/lib64/libcudnn* \
     && rm -rf ${CUDNN}
     
+# TENSORRT="TensorRT-8.6.1.6" \
+#     && wget -nv https://storage.googleapis.com/docker_resources/${TENSORRT}.Linux.x86_64-gnu.cuda-11.8.tar.gz \
 TENSORRT="TensorRT-8.6.1.6" \
-    && wget -nv https://storage.googleapis.com/docker_resources/${TENSORRT}.Linux.x86_64-gnu.cuda-11.8.tar.gz \
+    && wget -nv https://storage.googleapis.com/docker_resources/${TENSORRT}.Linux.x86_64-gnu.cuda-12.0.tar.gz \
     && tar xvxf ${TENSORRT}.Linux.x86_64-gnu.cuda-11.8.tar.gz \
     && rm ${TENSORRT}.Linux.x86_64-gnu.cuda-11.8.tar.gz \
     && find "${TENSORRT}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
