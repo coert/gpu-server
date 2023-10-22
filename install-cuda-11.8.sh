@@ -2,10 +2,13 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-# cp ./pyproject.toml /opt/pyproject.toml
+WORKSPACE=/opt/workspace
+mkdir -p ${WORKSPACE}
+cp ./pyproject.toml ${WORKSPACE}/pyproject.toml
+cp ./poetry.lock ${WORKSPACE}/poetry.lock
 
 INSTALL_LOCATION=/opt/nvidia_install
-mkdir ${INSTALL_LOCATION}
+mkdir -p ${INSTALL_LOCATION}
 cd ${INSTALL_LOCATION}
 
 apt-get remove --purge nvidia-driver-* -y \
@@ -17,15 +20,15 @@ apt update && apt upgrade -y \
     && apt install -y --no-install-recommends linux-headers-$(uname -r) curl wget nano \
     htop software-properties-common apt-utils git git-core screen unzip
 
-# NVIDIA_DRIVER_VERSION="535.54.03" \
-NVIDIA_DRIVER_VERSION="520.61.05" \
+# NVIDIA_DRIVER_VERSION="520.61.05" \
+NVIDIA_DRIVER_VERSION="535.54.03" \
     && NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-${NVIDIA_DRIVER_VERSION}.run" \
     && wget -nv https://us.download.nvidia.com/tesla/${NVIDIA_DRIVER_VERSION}/${NVIDIA_DRIVER_INSTALLER} \
     && chmod +x ${NVIDIA_DRIVER_INSTALLER} \
     && ./${NVIDIA_DRIVER_INSTALLER} --no-questions --ui=none \
 
-# CUDA_VERSION="12.2.0" \
-CUDA_VERSION="11.8.0" \
+# CUDA_VERSION="11.8.0" \
+CUDA_VERSION="12.2.0" \
     && cuda_string=$(echo $CUDA_VERSION|sed -e 's/\.//g') \
     && CUDA_INSTALLER="cuda_${CUDA_VERSION}_${NVIDIA_DRIVER_VERSION}_linux.run" \
     && wget -nv https://developer.download.nvidia.com/compute/cuda/${CUDA_VERSION}/local_installers/${CUDA_INSTALLER} \
@@ -167,9 +170,9 @@ EOT
 #     && python3.10 -m venv /opt/venv \
 #     && curl -sSL https://install.python-poetry.org | python3.10 -
 
-curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
-curl -sSL https://install.python-poetry.org | python3.10 -
-snap install nvtop
+# curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
+# curl -sSL https://install.python-poetry.org | python3.10 -
+# snap install nvtop
 
 # POETRY=poetry
 # RFILE="requirements.txt"
@@ -179,6 +182,6 @@ snap install nvtop
 # pip3 install --no-cache-dir -r requirements.txt \
 #     && pip3 install --ignore-installed --no-cache-dir -U crcmod
 
-# rm -rf ${INSTALL_LOCATION}
+rm -rf ${INSTALL_LOCATION}
 
-# reboot 0
+reboot 0
