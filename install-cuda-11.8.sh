@@ -7,10 +7,15 @@ INSTALL_LOCATION=/opt/nvidia_install
 mkdir ${INSTALL_LOCATION}
 cd ${INSTALL_LOCATION}
 
+apt-get remove --purge nvidia-driver-* -y \
+    && apt-get autoremove --purge -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 apt update && apt upgrade -y \
     && apt install -y --no-install-recommends linux-headers-$(uname -r) curl wget nano \
-    htop software-properties-common apt-utils git git-core screen unzip \
-    && add-apt-repository -y ppa:graphics-drivers/ppa
+    htop software-properties-common apt-utils git git-core screen unzip
+    # && add-apt-repository -y ppa:graphics-drivers/ppa
 
 NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-520.61.05.run" \
     && wget -nv https://us.download.nvidia.com/tesla/520.61.05/${NVIDIA_DRIVER_INSTALLER} \
@@ -18,11 +23,21 @@ NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-520.61.05.run" \
     && ./${NVIDIA_DRIVER_INSTALLER} --no-questions --ui=none \
     && modprobe nvidia
 
-wget -nv https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin \
-    && mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600 \
-    && wget -nv https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda-repo-ubuntu2204-11-8-local_11.8.0-520.61.05-1_amd64.deb \
-    && dpkg -i cuda-repo-ubuntu2204-11-8-local_11.8.0-520.61.05-1_amd64.deb \
-    && cp /var/cuda-repo-ubuntu2204-11-8-local/cuda-*-keyring.gpg /usr/share/keyrings/
+CUDA_11_INSTALLER="cuda_11.8.0_520.61.05_linux.run" \
+    && wget -nv https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/${CUDA_11_INSTALLER} \
+    && chmod +x ${CUDA_11_INSTALLER} \
+    && "./${CUDA_11_INSTALLER}" --silent --toolkit --no-drm \
+    && update-alternatives --install /usr/local/cuda cuda /usr/local/cuda-11.8 118
+
+# distribution=$(. /etc/os-release;echo $ID$VERSION_ID | sed -e 's/\.//g') \
+#     && wget -nv https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/cuda-keyring_1.0-1_all.deb \
+#     && dpkg -i cuda-keyring_1.0-1_all.deb \
+#     && apt update && apt install -y --no-install-recommends cuda-drivers-520 \
+#     && wget -nv https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/cuda-$distribution.pin \
+#     && mv cuda-$distribution.pin /etc/apt/preferences.d/cuda-repository-pin-600 \
+#     && wget -nv https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda-repo-$distribution-11-8-local_11.8.0-520.61.05-1_amd64.deb \
+#     && dpkg -i cuda-repo-$distribution-11-8-local_11.8.0-520.61.05-1_amd64.deb \
+#     && cp /var/cuda-repo-$distribution-11-8-local/cuda-*-keyring.gpg /usr/share/keyrings/
 
 add-apt-repository -y ppa:deadsnakes/ppa && \
     apt update && apt upgrade -y && apt install -y --no-install-recommends python3 ipython3 \
@@ -49,17 +64,12 @@ add-apt-repository -y ppa:deadsnakes/ppa && \
     libzmq3-dev libzvbi-dev lv2-dev opencl-headers openexr pkg-config qttools5-dev qttools5-dev-tools \
     libeigen3-dev liblapack-dev cmake libopencv-dev \
     apt-transport-https ca-certificates \
-    cuda-11-8 cuda-libraries-11-8 cuda-tools-11-8 cuda-toolkit-11-8 \
     libmp3lame-dev libfdk-aac-dev libopus-dev libflac-dev libx264-dev libx265-dev libvpx-dev libass-dev libvorbis-dev \
     libfreetype6-dev meson ninja-build texinfo zlib1g-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# CUDA_11_INSTALLER="cuda_11.8.0_520.61.05_linux.run" \
-#     && wget -nv https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/${CUDA_11_INSTALLER} \
-#     && chmod +x ${CUDA_11_INSTALLER} \
-#     && "./${CUDA_11_INSTALLER}" --silent --toolkit --no-drm \
-#     && update-alternatives --install /usr/local/cuda cuda /usr/local/cuda-11.8 118
+    # cuda-11-8 cuda-libraries-11-8 cuda-tools-11-8 cuda-toolkit-11-8 \
 
 CUPTI="cupti-linux-2019.1.1.1" \
     && wget -nv https://storage.googleapis.com/docker_resources/${CUPTI}.tar.gz \
