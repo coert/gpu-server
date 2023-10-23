@@ -187,4 +187,4 @@ EOT
 
 rm -rf ${INSTALL_LOCATION}
 
-reboot 0
+# reboot 0
