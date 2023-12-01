@@ -9,6 +9,8 @@ export DEBIAN_FRONTEND=noninteractive
 CUDA_VERSION="12.3.0"
 NVIDIA_DRIVER_VERSION="545.23.06"
 
+PWD=$(pwd)
+
 INSTALL_LOCATION=/opt/nvidia_install
 mkdir -p ${INSTALL_LOCATION}
 cd ${INSTALL_LOCATION}
@@ -180,6 +182,9 @@ KEYRING_DIR=${HOME}/.config/python_keyring \
 [backend]
 default-keyring=keyring.backends.fail.Keyring
 EOT
+
+# Return to original directory
+cd ${PWD}
 
 # Remove the installation directory
 rm -rf ${INSTALL_LOCATION}
