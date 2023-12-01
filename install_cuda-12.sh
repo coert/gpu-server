@@ -30,17 +30,17 @@ CUDA_INSTALLER="cuda_${CUDA_VERSION}_${NVIDIA_DRIVER_VERSION}_linux.run" \
     && chmod +x ${CUDA_INSTALLER} \
     && "./${CUDA_INSTALLER}" --extract="${INSTALL_LOCATION}/cuda_${CUDA_VERSION}"
 
+# Install CUDA
+cuda_string=$(echo $CUDA_VERSION|sed -e 's/\.//g') && cuda_major="${CUDA_VERSION%.*}" \
+    && "./${CUDA_INSTALLER}" --silent --toolkit --no-drm \
+    && update-alternatives --install /usr/local/cuda cuda /usr/local/cuda-${cuda_major} ${cuda_string}
+
 # Go to the CUDA archive directory and install its NVIDIA drivers
 cd "${INSTALL_LOCATION}/cuda_${CUDA_VERSION}"
 
 # Install NVIDIA drivers
 NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-${NVIDIA_DRIVER_VERSION}.run" \
     && ./${NVIDIA_DRIVER_INSTALLER} --no-questions --ui=none
-
-# Install CUDA
-cuda_string=$(echo $CUDA_VERSION|sed -e 's/\.//g') && cuda_major="${CUDA_VERSION%.*}" \
-    && "./${CUDA_INSTALLER}" --silent --toolkit --no-drm \
-    && update-alternatives --install /usr/local/cuda cuda /usr/local/cuda-${cuda_major} ${cuda_string}
 
 # Install CUPTI (required by Torch 2.1+)
 CUPTI="cuda_cupti/extras/CUPTI" \
