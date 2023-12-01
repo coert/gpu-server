@@ -194,6 +194,6 @@ snap install nvtop
 WORKSPACE=/opt/workspace
 mkdir -p ${WORKSPACE}
 cp ${CURRENT_DIR}/pyproject.toml ${WORKSPACE}/pyproject.toml
-cp ${CURRENT_DIR}poetry.lock ${WORKSPACE}/poetry.lock
-cp ${CURRENT_DIR}install_poetry.sh ${WORKSPACE}/install_poetry.sh
+cp ${CURRENT_DIR}/poetry.lock ${WORKSPACE}/poetry.lock
+cp ${CURRENT_DIR}/install_poetry.sh ${WORKSPACE}/install_poetry.sh
 cp ${CURRENT_DIR}/test_torch.sh ${WORKSPACE}/test_torch.sh
