@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -x
+
 export DEBIAN_FRONTEND=noninteractive
 
 # These are linked, you need to look up the correct driver version that comes with the CUDA version
