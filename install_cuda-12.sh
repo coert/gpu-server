@@ -9,7 +9,7 @@ export DEBIAN_FRONTEND=noninteractive
 CUDA_VERSION="12.3.0"
 NVIDIA_DRIVER_VERSION="545.23.06"
 
-PWD=$(pwd)
+CURRENT_DIR=$(pwd)
 
 INSTALL_LOCATION=/opt/nvidia_install
 mkdir -p ${INSTALL_LOCATION}
@@ -183,9 +183,8 @@ KEYRING_DIR=${HOME}/.config/python_keyring \
 default-keyring=keyring.backends.fail.Keyring
 EOT
 
-# Return to original directory
-cd ${PWD}
-
+# Return
+cd ${CURRENT_DIR}
 # Remove the installation directory
 rm -rf ${INSTALL_LOCATION}
 
@@ -194,7 +193,7 @@ snap install nvtop
 # Add everything needed to install the workspace
 WORKSPACE=/opt/workspace
 mkdir -p ${WORKSPACE}
-cp ./pyproject.toml ${WORKSPACE}/pyproject.toml
-cp ./poetry.lock ${WORKSPACE}/poetry.lock
-cp ./install_poetry.sh ${WORKSPACE}/install_poetry.sh
-cp ./test_torch.sh ${WORKSPACE}/test_torch.sh
+cp ${CURRENT_DIR}/pyproject.toml ${WORKSPACE}/pyproject.toml
+cp ${CURRENT_DIR}poetry.lock ${WORKSPACE}/poetry.lock
+cp ${CURRENT_DIR}install_poetry.sh ${WORKSPACE}/install_poetry.sh
+cp ${CURRENT_DIR}/test_torch.sh ${WORKSPACE}/test_torch.sh
