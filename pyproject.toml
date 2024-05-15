@@ -31,18 +31,17 @@ scikit-image = "^0.20.0"
 scikit-learn = "^1.2.2"
 tqdm = "^4.65.0"
 
-[tool.poetry.group.torch.dependencies]
-pytorch-lightning = "^2.0.8"
-segmentation-models-pytorch = "^0.3.3"
-tensorboard = "^2.14.0"
-torch = {version = "^2.0.1+cu118", source = "pytorch"}
-torch-tb-profiler = "^0.4.1"
-torchvision = {version = "^0.15.2+cu118", source = "pytorch"}
+[tool.poetry.group.tensorflow.dependencies]
+tensorflow = { version = ">=2.15,<2.16", extras = ["and-cuda"] }
+tensorrt = "*"
 
-[[tool.poetry.source]]
-name = "pytorch"
-priority = "explicit"
-url = "https://download.pytorch.org/whl/cu118"
+[tool.poetry.group.torch.dependencies]
+pytorch-lightning = "*"
+segmentation-models-pytorch = "*"
+tensorboard = "*"
+torch = "<2.3"
+torch-tb-profiler = "*"
+torchvision = "*"
 
 [tool.poetry.group.google.dependencies]
 google-api-python-client = "^2.86.0"
@@ -51,6 +50,9 @@ google-cloud-storage = "^2.8.0"
 google-cloud-translate = "^3.11.1"
 google-cloud-videointelligence = "^2.11.1"
 google-cloud-vision = "^3.4.1"
+
+[tool.poetry.group.dev]
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

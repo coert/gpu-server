@@ -50,37 +50,48 @@ CUPTI="cuda_cupti/extras/CUPTI" \
     && find "${CUPTI}/lib64/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
     && find -L "${CUPTI}/lib64/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \;
 
-# Install NCCL (required by Torch 2.1+)
-NCCL="nccl_2.18.5-1+cuda12.2_x86_64" \
-    && wget -nv "https://storage.googleapis.com/docker_resources/${NCCL}.txz" \
-    && tar xxf ${NCCL}.txz \
-    && rm ${NCCL}.txz \
-    && find "${NCCL}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
-    && find "${NCCL}/lib/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
-    && find -L "${NCCL}/lib/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \;
+# # Install NCCL (required by Torch 2.1+)
+# NCCL="nccl_2.18.5-1+cuda12.2_x86_64" \
+#     && wget -nv "https://storage.googleapis.com/docker_resources/${NCCL}.txz" \
+#     && tar xxf ${NCCL}.txz \
+#     && rm ${NCCL}.txz \
+#     && find "${NCCL}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
+#     && find "${NCCL}/lib/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
+#     && find -L "${NCCL}/lib/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \;
 
-# Install cuDNN (required by Torch 2.1+)
-CUDNN="cudnn-linux-x86_64-8.9.5.29_cuda12-archive" \
-    && wget -nv "https://storage.googleapis.com/docker_resources/${CUDNN}.tar.xz" \
-    && tar xxf "${CUDNN}.tar.xz" \
-    && rm "${CUDNN}.tar.xz" \
-    && find "${CUDNN}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
-    && find "${CUDNN}/lib/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
-    && find -L "${CUDNN}/lib/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \; \
-    && chmod a+r /usr/local/cuda/include/*.h /usr/local/cuda/lib64/libcudnn* \
-    && rm -rf ${CUDNN}
+# # Install cuDNN (required by Torch 2.1+)
+# CUDNN="cudnn-linux-x86_64-8.9.5.29_cuda12-archive" \
+#     && wget -nv "https://storage.googleapis.com/docker_resources/${CUDNN}.tar.xz" \
+#     && tar xxf "${CUDNN}.tar.xz" \
+#     && rm "${CUDNN}.tar.xz" \
+#     && find "${CUDNN}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
+#     && find "${CUDNN}/lib/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
+#     && find -L "${CUDNN}/lib/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \; \
+#     && chmod a+r /usr/local/cuda/include/*.h /usr/local/cuda/lib64/libcudnn* \
+#     && rm -rf ${CUDNN}
 
-# Install cuDNN (required by Tensorflow 2+)
-TENSORRT="TensorRT-8.6.1.6" && trt_cuda="cuda-12.0" \
-    && wget -nv https://storage.googleapis.com/docker_resources/${TENSORRT}.Linux.x86_64-gnu.${trt_cuda}.tar.gz \
-    && tar xzf ${TENSORRT}.Linux.x86_64-gnu.${trt_cuda}.tar.gz \
-    && rm ${TENSORRT}.Linux.x86_64-gnu.${trt_cuda}.tar.gz \
-    && find "${TENSORRT}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
-    && find "${TENSORRT}/lib/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
-    && find -L "${TENSORRT}/lib/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \; \
-    && find "${TENSORRT}/bin/" -type f -exec cp -P {} /usr/local/cuda/bin/ \; \
+# # Install cuDNN (required by Tensorflow 2+)
+# TENSORRT="TensorRT-8.6.1.6" && trt_cuda="cuda-12.0" \
+#     && wget -nv https://storage.googleapis.com/docker_resources/${TENSORRT}.Linux.x86_64-gnu.${trt_cuda}.tar.gz \
+#     && tar xzf ${TENSORRT}.Linux.x86_64-gnu.${trt_cuda}.tar.gz \
+#     && rm ${TENSORRT}.Linux.x86_64-gnu.${trt_cuda}.tar.gz \
+#     && find "${TENSORRT}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
+#     && find "${TENSORRT}/lib/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
+#     && find -L "${TENSORRT}/lib/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \; \
+#     && find "${TENSORRT}/bin/" -type f -exec cp -P {} /usr/local/cuda/bin/ \; \
+#     && chmod a+r /usr/local/cuda/include/*.h /usr/local/cuda/lib64/* \
+#     && rm -rf ${TENSORRT}
+
+# Install TensorRT
+TRT_VER=10.0.0.6 && trt_cuda="cuda-12.4" \
+    && wget -nv https://storage.googleapis.com/docker_resources/TensorRT-${TRT_VER}.Linux.x86_64-gnu.${trt_cuda}.tar.gz -O /root/repo/TensorRT.tar.gz \
+    && tar -xvf TensorRT.tar.gz \
+    && rm TensorRT.tar.gz \
+    && find "TensorRT-${TRT_VER}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
+    && find "TensorRT-${TRT_VER}/lib/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
+    && find -L "TensorRT-${TRT_VER}/lib/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \; \
     && chmod a+r /usr/local/cuda/include/*.h /usr/local/cuda/lib64/* \
-    && rm -rf ${TENSORRT}
+    && rm -rf TensorRT-${TRT_VER} \
 
 # Return to INSTALL_LOCATION
 cd ${INSTALL_LOCATION}
@@ -197,3 +208,12 @@ cp ${CURRENT_DIR}/pyproject.toml ${WORKSPACE}/pyproject.toml
 cp ${CURRENT_DIR}/poetry.lock ${WORKSPACE}/poetry.lock
 cp ${CURRENT_DIR}/install_poetry.sh ${WORKSPACE}/install_poetry.sh
 cp ${CURRENT_DIR}/test_torch.sh ${WORKSPACE}/test_torch.sh
+cp ${CURRENT_DIR}/test_tensorflow.sh ${WORKSPACE}/test_tensorflow.sh
+
+# TENSORRT_VERSION=$(python3 -c "import tensorflow.compiler as tf_cc; print('.'.join(map(str, tf_cc.tf2tensorrt._pywrap_py_utils.get_linked_tensorrt_version())))" 2> /dev/null) \
+#     && TENSORRT_FILE=$(python3 -c "import tensorrt; print(tensorrt.__file__)" 2>/dev/null) \
+#     && TENSORRT_DIR=$(dirname "$TENSORRT_FILE") \
+#     && TENSORRT_LIBS_FILE=$(python3 -c "import tensorrt_libs; print(tensorrt_libs.__file__)" 2>/dev/null) \
+#     && TENSORRT_LIBS_DIR=$(dirname "$TENSORRT_LIBS_FILE") \
+#     && ln -srf "${TENSORRT_LIBS_DIR}/libnvinfer.so.8" "${TENSORRT_DIR}/libnvinfer.so.${TENSORRT_VERSION}" \
+#     && ln -srf "${TENSORRT_LIBS_DIR}/libnvinfer_plugin.so.8" "${TENSORRT_DIR}/libnvinfer_plugin.so.${TENSORRT_VERSION}"
