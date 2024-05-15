@@ -6,8 +6,8 @@ set -x
 export DEBIAN_FRONTEND=noninteractive
 
 # These are linked, you need to look up the correct driver version that comes with the CUDA version
-CUDA_VERSION="12.3.0"
-NVIDIA_DRIVER_VERSION="545.23.06"
+CUDA_VERSION="12.4.1"
+NVIDIA_DRIVER_VERSION="550.54.15"
 
 CURRENT_DIR=$(pwd)
 
