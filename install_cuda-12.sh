@@ -98,15 +98,15 @@ cd ${INSTALL_LOCATION}
 
 # Get everything needed for FFMpeg
 add-apt-repository -y ppa:deadsnakes/ppa && \
-    apt update && apt upgrade -y && apt install -y --no-install-recommends python3 ipython3 \
-    python3.10 python2-minimal python2.7 python2.7-dev \
-    python3-dev python3.10-dev python3-apt python3.10-distutils python3.10-venv \
-    && update-alternatives --install /usr/bin/python python /usr/bin/python2.7 210 \
+    apt update && apt upgrade -y && apt install -y --no-install-recommends \
+    python3 ipython3 python3-dev python3.10 python3.12 \
+    python3.10-dev python3-apt python3.10-distutils python3.10-venv \
+    python3.12-dev python3-apt python3.12-distutils python3.12-venv \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3.10 310 \
     && update-alternatives --set python /usr/bin/python3.10 \
-    && update-alternatives --install /usr/bin/python2 python2 /usr/bin/python2.7 2 \
     && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 10 \
-    && update-alternatives --set python3 /usr/bin/python3.10 \
+    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 12 \
+    && update-alternatives --set python3 /usr/bin/python3.12 \
     && apt update -y && apt install -y --no-install-recommends \
     gnupg automake autoconf bash-completion build-essential caca-utils flite1-dev gcc gfortran yasm nasm \
     ladspa-sdk lame libasound2-dev libatlas-base-dev libavcodec-dev libavformat-dev \
