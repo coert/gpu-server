@@ -23,7 +23,9 @@ apt-get remove --purge nvidia-driver-* -y \
 
 # Install downloaders and installers
 apt update && apt upgrade -y \
-    && apt install -y --no-install-recommends linux-headers-$(uname -r) curl wget nano \
+    && apt install -y --no-install-recommends \
+    pkg-config xorg-dev libvulkan-dev libvulkan1 \
+    linux-headers-$(uname -r) curl wget nano \
     htop software-properties-common apt-utils git git-core screen unzip
 
 # Extract NVIDIA drivers, CUDA and Extras from the CUDA archive
