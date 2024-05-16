@@ -103,8 +103,8 @@ cd ${INSTALL_LOCATION}
 # Get everything needed for FFMpeg
 add-apt-repository -y ppa:deadsnakes/ppa \
     && apt update -y && apt upgrade -y && apt install -y --no-install-recommends \
-    python3 ipython3 python3-dev python3.10 python3.12 \
-    python3.10-dev python3-apt python3.10-distutils python3.10-venv \
+    python3 ipython3 python3-dev python3.11 python3.12 \
+    python3.11-dev python3-apt python3.11-distutils python3.11-venv \
     python3.12-dev python3-apt python3.12-distutils python3.12-venv \
     gnupg automake autoconf bash-completion build-essential caca-utils flite1-dev gcc gfortran yasm nasm \
     ladspa-sdk lame libasound2-dev libatlas-base-dev libavcodec-dev libavformat-dev \
