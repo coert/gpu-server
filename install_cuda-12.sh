@@ -127,51 +127,51 @@ add-apt-repository -y ppa:deadsnakes/ppa \
 #     && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 12 \
 #     && update-alternatives --set python3 /usr/bin/python3.12
 
-# Required by FFMpeg
-VIDEO_CODEC="Video_Codec_SDK_12.1.14" \
-    && wget -nv https://storage.googleapis.com/docker_resources/${VIDEO_CODEC}.zip \
-    && unzip -o ${VIDEO_CODEC}.zip \
-    && rm ${VIDEO_CODEC}.zip \
-    && cp Video_Codec_SDK_*/Interface/* /usr/local/include/ \
-    && rm -rf ${VIDEO_CODEC}
+# # Required by FFMpeg
+# VIDEO_CODEC="Video_Codec_SDK_12.1.14" \
+#     && wget -nv https://storage.googleapis.com/docker_resources/${VIDEO_CODEC}.zip \
+#     && unzip -o ${VIDEO_CODEC}.zip \
+#     && rm ${VIDEO_CODEC}.zip \
+#     && cp Video_Codec_SDK_*/Interface/* /usr/local/include/ \
+#     && rm -rf ${VIDEO_CODEC}
 
-# Required by FFMpeg
-git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
-    && cd nv-codec-headers \
-    && make && make install \
-    && cd - \
-    && rm -rf nv-codec-headers
+# # Required by FFMpeg
+# git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
+#     && cd nv-codec-headers \
+#     && make && make install \
+#     && cd - \
+#     && rm -rf nv-codec-headers
 
-lsb_release_codename=$(lsb_release -c -s) && GCSFUSE_REPO="gcsfuse-$lsb_release_codename" \
-    && echo "deb https://packages.cloud.google.com/apt ${GCSFUSE_REPO} main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list \
-    && echo "deb [signed-by=/usr/share/keyrings/cloud.google.asc] http://packages.cloud.google.com/apt cloud-sdk main" \
-    | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
-    && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.asc \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C0BA5CE6DC6315A3 \
-    && apt-get update -y && apt-get install -y --no-install-recommends google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin gcsfuse
+# lsb_release_codename=$(lsb_release -c -s) && GCSFUSE_REPO="gcsfuse-$lsb_release_codename" \
+#     && echo "deb https://packages.cloud.google.com/apt ${GCSFUSE_REPO} main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list \
+#     && echo "deb [signed-by=/usr/share/keyrings/cloud.google.asc] http://packages.cloud.google.com/apt cloud-sdk main" \
+#     | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
+#     && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.asc \
+#     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C0BA5CE6DC6315A3 \
+#     && apt-get update -y && apt-get install -y --no-install-recommends google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin gcsfuse
 
 # Required for the FFMpeg make to find nvcc
 export PATH="/usr/local/cuda/bin:${HOME}/bin:${HOME}/.local/bin:${PATH}"
 
-# GIT Clone FFMpeg, make and make install
-git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg_src \
-    && cd ffmpeg_src \
-    && ./configure \
-    --pkg-config-flags="--static" \
-    --extra-cflags=-I/usr/local/cuda/include \
-    --extra-ldflags=-L/usr/local/cuda/lib64 \
-    --extra-libs="-lpthread -lm" \
-    --ld="g++" \
-    --enable-cuda-nvcc --enable-cuvid --enable-nvdec --enable-nvenc --enable-libnpp \
-    --enable-gpl --enable-gnutls --enable-libfreetype \
-    --enable-libass --enable-libfdk-aac --enable-libmp3lame --enable-libopus \
-    --enable-libvorbis --enable-libvpx \
-    --enable-libx264 --enable-libx265 \
-    --enable-nonfree --disable-static --enable-shared --enable-optimizations \
-    > configure.log 2>&1 || (cat configure.log && exit 1) \
-    && make -j$(nproc) && make install \
-    && cd - \
-    && rm -rf ffmpeg_src
+# # GIT Clone FFMpeg, make and make install
+# git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg_src \
+#     && cd ffmpeg_src \
+#     && ./configure \
+#     --pkg-config-flags="--static" \
+#     --extra-cflags=-I/usr/local/cuda/include \
+#     --extra-ldflags=-L/usr/local/cuda/lib64 \
+#     --extra-libs="-lpthread -lm" \
+#     --ld="g++" \
+#     --enable-cuda-nvcc --enable-cuvid --enable-nvdec --enable-nvenc --enable-libnpp \
+#     --enable-gpl --enable-gnutls --enable-libfreetype \
+#     --enable-libass --enable-libfdk-aac --enable-libmp3lame --enable-libopus \
+#     --enable-libvorbis --enable-libvpx \
+#     --enable-libx264 --enable-libx265 \
+#     --enable-nonfree --disable-static --enable-shared --enable-optimizations \
+#     > configure.log 2>&1 || (cat configure.log && exit 1) \
+#     && make -j$(nproc) && make install \
+#     && cd - \
+#     && rm -rf ffmpeg_src
 
 # Add paths and autoload keychain to general profile 
 # and add keyring config which is required by Poetry
