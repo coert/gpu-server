@@ -28,29 +28,29 @@ apt update && apt upgrade -y \
     linux-headers-$(uname -r) curl wget nano \
     htop software-properties-common apt-utils git git-core screen unzip
 
-# Extract NVIDIA drivers, CUDA and Extras from the CUDA archive
-CUDA_INSTALLER="cuda_${CUDA_VERSION}_${NVIDIA_DRIVER_VERSION}_linux.run" \
-    && wget -nv "https://developer.download.nvidia.com/compute/cuda/${CUDA_VERSION}/local_installers/${CUDA_INSTALLER}" \
-    && chmod +x ${CUDA_INSTALLER} \
-    && "./${CUDA_INSTALLER}" --extract="${INSTALL_LOCATION}/cuda_${CUDA_VERSION}"
+# # Extract NVIDIA drivers, CUDA and Extras from the CUDA archive
+# CUDA_INSTALLER="cuda_${CUDA_VERSION}_${NVIDIA_DRIVER_VERSION}_linux.run" \
+#     && wget -nv "https://developer.download.nvidia.com/compute/cuda/${CUDA_VERSION}/local_installers/${CUDA_INSTALLER}" \
+#     && chmod +x ${CUDA_INSTALLER} \
+#     && "./${CUDA_INSTALLER}" --extract="${INSTALL_LOCATION}/cuda_${CUDA_VERSION}"
 
-# Install CUDA
-cuda_string=$(echo $CUDA_VERSION|sed -e 's/\.//g') && cuda_major="${CUDA_VERSION%.*}" \
-    && "./${CUDA_INSTALLER}" --silent --toolkit --no-drm \
-    && update-alternatives --install /usr/local/cuda cuda /usr/local/cuda-${cuda_major} ${cuda_string}
+# # Install CUDA
+# cuda_string=$(echo $CUDA_VERSION|sed -e 's/\.//g') && cuda_major="${CUDA_VERSION%.*}" \
+#     && "./${CUDA_INSTALLER}" --silent --toolkit --no-drm \
+#     && update-alternatives --install /usr/local/cuda cuda /usr/local/cuda-${cuda_major} ${cuda_string}
 
-# Go to the CUDA archive directory and install its NVIDIA drivers
-cd "${INSTALL_LOCATION}/cuda_${CUDA_VERSION}"
+# # Go to the CUDA archive directory and install its NVIDIA drivers
+# cd "${INSTALL_LOCATION}/cuda_${CUDA_VERSION}"
 
-# Install NVIDIA drivers
-NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-${NVIDIA_DRIVER_VERSION}.run" \
-    && ./${NVIDIA_DRIVER_INSTALLER} --no-questions --ui=none
+# # Install NVIDIA drivers
+# NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-${NVIDIA_DRIVER_VERSION}.run" \
+#     && ./${NVIDIA_DRIVER_INSTALLER} --no-questions --ui=none
 
-# Install CUPTI (required by Torch 2.1+)
-CUPTI="cuda_cupti/extras/CUPTI" \
-    && find "${CUPTI}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
-    && find "${CUPTI}/lib64/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
-    && find -L "${CUPTI}/lib64/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \;
+# # Install CUPTI (required by Torch 2.1+)
+# CUPTI="cuda_cupti/extras/CUPTI" \
+#     && find "${CUPTI}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
+#     && find "${CUPTI}/lib64/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
+#     && find -L "${CUPTI}/lib64/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \;
 
 # # Install NCCL (required by Torch 2.1+)
 # NCCL="nccl_2.18.5-1+cuda12.2_x86_64" \
@@ -84,16 +84,16 @@ CUPTI="cuda_cupti/extras/CUPTI" \
 #     && chmod a+r /usr/local/cuda/include/*.h /usr/local/cuda/lib64/* \
 #     && rm -rf ${TENSORRT}
 
-# Install TensorRT
-TRT_VER=10.0.0.6 && trt_cuda="cuda-12.4" \
-    && wget -nv https://storage.googleapis.com/docker_resources/TensorRT-${TRT_VER}.Linux.x86_64-gnu.${trt_cuda}.tar.gz -O TensorRT.tar.gz \
-    && tar -xvf TensorRT.tar.gz \
-    && rm TensorRT.tar.gz \
-    && find "TensorRT-${TRT_VER}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
-    && find "TensorRT-${TRT_VER}/lib/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
-    && find -L "TensorRT-${TRT_VER}/lib/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \; \
-    && chmod a+r /usr/local/cuda/include/*.h /usr/local/cuda/lib64/* \
-    && rm -rf TensorRT-${TRT_VER} \
+# # Install TensorRT
+# TRT_VER=10.0.0.6 && trt_cuda="cuda-12.4" \
+#     && wget -nv https://storage.googleapis.com/docker_resources/TensorRT-${TRT_VER}.Linux.x86_64-gnu.${trt_cuda}.tar.gz -O TensorRT.tar.gz \
+#     && tar -xvf TensorRT.tar.gz \
+#     && rm TensorRT.tar.gz \
+#     && find "TensorRT-${TRT_VER}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
+#     && find "TensorRT-${TRT_VER}/lib/" -type f -exec cp -P {} /usr/local/cuda/lib64/ \; \
+#     && find -L "TensorRT-${TRT_VER}/lib/" -xtype l -exec cp -P {} /usr/local/cuda/lib64/ \; \
+#     && chmod a+r /usr/local/cuda/include/*.h /usr/local/cuda/lib64/* \
+#     && rm -rf TensorRT-${TRT_VER} \
 
 # Return to INSTALL_LOCATION
 cd ${INSTALL_LOCATION}
