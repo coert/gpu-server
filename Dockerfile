@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.4.1-devel-ubuntu22.04 as module
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
 LABEL maintainer="coert.vangemeren@hu.nl"
 
 ENV DEBIAN_FRONTEND=noninteractive
