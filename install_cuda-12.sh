@@ -84,7 +84,7 @@ CUPTI="cuda_cupti/extras/CUPTI" \
 
 # Install TensorRT
 TRT_VER=10.0.0.6 && trt_cuda="cuda-12.4" \
-    && wget -nv https://storage.googleapis.com/docker_resources/TensorRT-${TRT_VER}.Linux.x86_64-gnu.${trt_cuda}.tar.gz -O /root/repo/TensorRT.tar.gz \
+    && wget -nv https://storage.googleapis.com/docker_resources/TensorRT-${TRT_VER}.Linux.x86_64-gnu.${trt_cuda}.tar.gz -O TensorRT.tar.gz \
     && tar -xvf TensorRT.tar.gz \
     && rm TensorRT.tar.gz \
     && find "TensorRT-${TRT_VER}/include/" -type f -exec cp -P {} /usr/local/cuda/include/ \; \
