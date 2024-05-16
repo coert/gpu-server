@@ -15,18 +15,18 @@ INSTALL_LOCATION=/opt/nvidia_install
 mkdir -p ${INSTALL_LOCATION}
 cd ${INSTALL_LOCATION}
 
-# Purge old NVIDIA drivers
-apt-get remove --purge nvidia-driver-* -y \
-    && apt-get autoremove --purge -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# # Purge old NVIDIA drivers
+# apt-get remove --purge nvidia-driver-* -y \
+#     && apt-get autoremove --purge -y \
+#     && apt-get clean \
+#     && rm -rf /var/lib/apt/lists/*
 
-# Install downloaders and installers
-apt update && apt upgrade -y \
-    && apt install -y --no-install-recommends \
-    pkg-config xorg-dev libvulkan-dev libvulkan1 \
-    linux-headers-$(uname -r) curl wget nano \
-    htop software-properties-common apt-utils git git-core screen unzip
+# # Install downloaders and installers
+# apt update && apt upgrade -y \
+#     && apt install -y --no-install-recommends \
+#     pkg-config xorg-dev libvulkan-dev libvulkan1 \
+#     linux-headers-$(uname -r) curl wget nano \
+#     htop software-properties-common apt-utils git git-core screen unzip
 
 # # Extract NVIDIA drivers, CUDA and Extras from the CUDA archive
 # CUDA_INSTALLER="cuda_${CUDA_VERSION}_${NVIDIA_DRIVER_VERSION}_linux.run" \
@@ -98,30 +98,30 @@ apt update && apt upgrade -y \
 # Return to INSTALL_LOCATION
 cd ${INSTALL_LOCATION}
 
-# Get everything needed for FFMpeg
-add-apt-repository -y ppa:deadsnakes/ppa \
-    && apt update -y && apt upgrade -y && apt install -y --no-install-recommends \
-    python3 ipython3 python3-dev python3.10 python3.12 \
-    python3.10-dev python3-apt python3.10-distutils python3.10-venv \
-    python3.12-dev python3-apt python3.12-distutils python3.12-venv \
-    gnupg automake autoconf bash-completion build-essential caca-utils flite1-dev gcc gfortran yasm nasm \
-    ladspa-sdk lame libasound2-dev libatlas-base-dev libavcodec-dev libavformat-dev \
-    libbluray-dev libbs2b-dev libc6 libc6-dev libcaca-dev libcdio-cdda-dev libcdio-dev \
-    libcdio-paranoia-dev libcodec2-dev libegl1-mesa-dev libfdkaac-ocaml-dev \
-    libflite1 libgles2-mesa-dev libglew-dev libgme-dev libgnutls28-dev libgsm1-dev libgstreamer1.0-dev \
-    libgstreamer-plugins-base1.0-dev libgtk-3-dev libibus-1.0-dev libjack-jackd2-dev libjpeg-dev liblilv-dev \
-    libmp3lame-ocaml-dev libmysofa-dev libnuma1 libnuma-dev libopenal-dev libhdf5-dev \
-    libopenexr-dev libopenmpt-dev libpng-dev libqt5svg5-dev librubberband-dev libsamplerate-ocaml-dev \
-    libshine-dev libshine-ocaml-dev libsndfile1-dev libsndio-dev libsoxr-dev libspeex-dev \
-    libssh-dev libswscale-dev libtbb2 libtbb-dev libtiff-dev libtool libtwolame-dev libunistring-dev libv4l-dev \
-    libwavpack-dev libwebp-dev libxml2-dev libxvidcore-dev \
-    libzmq3-dev libzvbi-dev lv2-dev opencl-headers openexr pkg-config qttools5-dev qttools5-dev-tools \
-    libeigen3-dev liblapack-dev cmake libopencv-dev \
-    apt-transport-https ca-certificates \
-    libmp3lame-dev libfdk-aac-dev libopus-dev libflac-dev libx264-dev libx265-dev libvpx-dev libass-dev libvorbis-dev \
-    libfreetype6-dev meson ninja-build texinfo zlib1g-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*.
+# # Get everything needed for FFMpeg
+# add-apt-repository -y ppa:deadsnakes/ppa \
+#     && apt update -y && apt upgrade -y && apt install -y --no-install-recommends \
+#     python3 ipython3 python3-dev python3.10 python3.12 \
+#     python3.10-dev python3-apt python3.10-distutils python3.10-venv \
+#     python3.12-dev python3-apt python3.12-distutils python3.12-venv \
+#     gnupg automake autoconf bash-completion build-essential caca-utils flite1-dev gcc gfortran yasm nasm \
+#     ladspa-sdk lame libasound2-dev libatlas-base-dev libavcodec-dev libavformat-dev \
+#     libbluray-dev libbs2b-dev libc6 libc6-dev libcaca-dev libcdio-cdda-dev libcdio-dev \
+#     libcdio-paranoia-dev libcodec2-dev libegl1-mesa-dev libfdkaac-ocaml-dev \
+#     libflite1 libgles2-mesa-dev libglew-dev libgme-dev libgnutls28-dev libgsm1-dev libgstreamer1.0-dev \
+#     libgstreamer-plugins-base1.0-dev libgtk-3-dev libibus-1.0-dev libjack-jackd2-dev libjpeg-dev liblilv-dev \
+#     libmp3lame-ocaml-dev libmysofa-dev libnuma1 libnuma-dev libopenal-dev libhdf5-dev \
+#     libopenexr-dev libopenmpt-dev libpng-dev libqt5svg5-dev librubberband-dev libsamplerate-ocaml-dev \
+#     libshine-dev libshine-ocaml-dev libsndfile1-dev libsndio-dev libsoxr-dev libspeex-dev \
+#     libssh-dev libswscale-dev libtbb2 libtbb-dev libtiff-dev libtool libtwolame-dev libunistring-dev libv4l-dev \
+#     libwavpack-dev libwebp-dev libxml2-dev libxvidcore-dev \
+#     libzmq3-dev libzvbi-dev lv2-dev opencl-headers openexr pkg-config qttools5-dev qttools5-dev-tools \
+#     libeigen3-dev liblapack-dev cmake libopencv-dev \
+#     apt-transport-https ca-certificates \
+#     libmp3lame-dev libfdk-aac-dev libopus-dev libflac-dev libx264-dev libx265-dev libvpx-dev libass-dev libvorbis-dev \
+#     libfreetype6-dev meson ninja-build texinfo zlib1g-dev \
+#     && apt-get clean \
+#     && rm -rf /var/lib/apt/lists/*.
 
 # update-alternatives --install /usr/bin/python python /usr/bin/python3.08 308 \
 #     && update-alternatives --install /usr/bin/python python /usr/bin/python3.10 310 \
@@ -201,7 +201,7 @@ cd ${CURRENT_DIR}
 # Remove the installation directory
 rm -rf ${INSTALL_LOCATION}
 
-snap install nvtop
+# snap install nvtop
 
 # Add everything needed to install the workspace
 WORKSPACE=/opt/workspace
