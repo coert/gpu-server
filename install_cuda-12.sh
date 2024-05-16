@@ -97,17 +97,11 @@ TRT_VER=10.0.0.6 && trt_cuda="cuda-12.4" \
 cd ${INSTALL_LOCATION}
 
 # Get everything needed for FFMpeg
-add-apt-repository -y ppa:deadsnakes/ppa && \
-    apt update && apt upgrade -y && apt install -y --no-install-recommends \
+add-apt-repository -y ppa:deadsnakes/ppa \
+    && apt update -y && apt upgrade -y && apt install -y --no-install-recommends \
     python3 ipython3 python3-dev python3.10 python3.12 \
     python3.10-dev python3-apt python3.10-distutils python3.10-venv \
     python3.12-dev python3-apt python3.12-distutils python3.12-venv \
-    && update-alternatives --install /usr/bin/python python /usr/bin/python3.10 310 \
-    && update-alternatives --set python /usr/bin/python3.10 \
-    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 10 \
-    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 12 \
-    && update-alternatives --set python3 /usr/bin/python3.12 \
-    && apt update -y && apt install -y --no-install-recommends \
     gnupg automake autoconf bash-completion build-essential caca-utils flite1-dev gcc gfortran yasm nasm \
     ladspa-sdk lame libasound2-dev libatlas-base-dev libavcodec-dev libavformat-dev \
     libbluray-dev libbs2b-dev libc6 libc6-dev libcaca-dev libcdio-cdda-dev libcdio-dev \
@@ -125,7 +119,13 @@ add-apt-repository -y ppa:deadsnakes/ppa && \
     libmp3lame-dev libfdk-aac-dev libopus-dev libflac-dev libx264-dev libx265-dev libvpx-dev libass-dev libvorbis-dev \
     libfreetype6-dev meson ninja-build texinfo zlib1g-dev \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*.
+
+# update-alternatives --install /usr/bin/python python /usr/bin/python3.08 308 \
+#     && update-alternatives --install /usr/bin/python python /usr/bin/python3.10 310 \
+#     && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 10 \
+#     && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 12 \
+#     && update-alternatives --set python3 /usr/bin/python3.12
 
 # Required by FFMpeg
 VIDEO_CODEC="Video_Codec_SDK_12.1.14" \
