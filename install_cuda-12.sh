@@ -42,12 +42,14 @@ cuda_string=$(echo $CUDA_VERSION|sed -e 's/\.//g') && cuda_major="${CUDA_VERSION
     && "./${CUDA_INSTALLER}" --silent --toolkit --no-drm \
     && update-alternatives --install /usr/local/cuda cuda /usr/local/cuda-${cuda_major} ${cuda_string}
 
-# Go to the CUDA archive directory and install its NVIDIA drivers
-cd "${INSTALL_LOCATION}/cuda_${CUDA_VERSION}"
+apt install -y --no-install-recommends nvidia-driver-530
 
-# Install NVIDIA drivers
-NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-${NVIDIA_DRIVER_VERSION}.run" \
-    && ./${NVIDIA_DRIVER_INSTALLER} --silent --no-questions --ui=none
+# # Go to the CUDA archive directory and install its NVIDIA drivers
+# cd "${INSTALL_LOCATION}/cuda_${CUDA_VERSION}"
+
+# # Install NVIDIA drivers
+# NVIDIA_DRIVER_INSTALLER="NVIDIA-Linux-x86_64-${NVIDIA_DRIVER_VERSION}.run" \
+#     && ./${NVIDIA_DRIVER_INSTALLER} --silent --no-questions --ui=none
 
 # # Install CUPTI (required by Torch 2.1+)
 # CUPTI="cuda_cupti/extras/CUPTI" \
@@ -134,20 +136,20 @@ add-apt-repository -y ppa:deadsnakes/ppa \
 #     && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 12 \
 #     && update-alternatives --set python3 /usr/bin/python3.12
 
-# Required by FFMpeg
-VIDEO_CODEC="Video_Codec_SDK_12.1.14" \
-    && wget -nv https://storage.googleapis.com/docker_resources/${VIDEO_CODEC}.zip \
-    && unzip -o ${VIDEO_CODEC}.zip \
-    && rm ${VIDEO_CODEC}.zip \
-    && cp Video_Codec_SDK_*/Interface/* /usr/local/include/ \
-    && rm -rf ${VIDEO_CODEC}
+# # Required by FFMpeg
+# VIDEO_CODEC="Video_Codec_SDK_12.1.14" \
+#     && wget -nv https://storage.googleapis.com/docker_resources/${VIDEO_CODEC}.zip \
+#     && unzip -o ${VIDEO_CODEC}.zip \
+#     && rm ${VIDEO_CODEC}.zip \
+#     && cp Video_Codec_SDK_*/Interface/* /usr/local/include/ \
+#     && rm -rf ${VIDEO_CODEC}
 
-# Required by FFMpeg
-git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
-    && cd nv-codec-headers \
-    && make && make install \
-    && cd - \
-    && rm -rf nv-codec-headers
+# # Required by FFMpeg
+# git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
+#     && cd nv-codec-headers \
+#     && make && make install \
+#     && cd - \
+#     && rm -rf nv-codec-headers
 
 lsb_release_codename=$(lsb_release -c -s) && GCSFUSE_REPO="gcsfuse-$lsb_release_codename" \
     && echo "deb https://packages.cloud.google.com/apt ${GCSFUSE_REPO} main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list \
@@ -158,27 +160,27 @@ lsb_release_codename=$(lsb_release -c -s) && GCSFUSE_REPO="gcsfuse-$lsb_release_
     && apt-get update -y && apt-get install -y --no-install-recommends google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin gcsfuse
 
 # Required for the FFMpeg make to find nvcc
-export PATH="/usr/local/cuda/bin:${HOME}/bin:${HOME}/.local/bin:${PATH}"
+# export PATH="/usr/local/cuda/bin:${HOME}/bin:${HOME}/.local/bin:${PATH}"
 
-# GIT Clone FFMpeg, make and make install
-git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg_src \
-    && cd ffmpeg_src \
-    && ./configure \
-    --pkg-config-flags="--static" \
-    --extra-cflags=-I/usr/local/cuda/include \
-    --extra-ldflags=-L/usr/local/cuda/lib64 \
-    --extra-libs="-lpthread -lm" \
-    --ld="g++" \
-    --enable-cuda-nvcc --enable-cuvid --enable-nvdec --enable-nvenc --enable-libnpp \
-    --enable-gpl --enable-gnutls --enable-libfreetype \
-    --enable-libass --enable-libfdk-aac --enable-libmp3lame --enable-libopus \
-    --enable-libvorbis --enable-libvpx \
-    --enable-libx264 --enable-libx265 \
-    --enable-nonfree --disable-static --enable-shared --enable-optimizations \
-    > configure.log 2>&1 || (cat configure.log && exit 1) \
-    && make -j$(nproc) && make install \
-    && cd - \
-    && rm -rf ffmpeg_src
+# # GIT Clone FFMpeg, make and make install
+# git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg_src \
+#     && cd ffmpeg_src \
+#     && ./configure \
+#     --pkg-config-flags="--static" \
+#     --extra-cflags=-I/usr/local/cuda/include \
+#     --extra-ldflags=-L/usr/local/cuda/lib64 \
+#     --extra-libs="-lpthread -lm" \
+#     --ld="g++" \
+#     --enable-cuda-nvcc --enable-cuvid --enable-nvdec --enable-nvenc --enable-libnpp \
+#     --enable-gpl --enable-gnutls --enable-libfreetype \
+#     --enable-libass --enable-libfdk-aac --enable-libmp3lame --enable-libopus \
+#     --enable-libvorbis --enable-libvpx \
+#     --enable-libx264 --enable-libx265 \
+#     --enable-nonfree --disable-static --enable-shared --enable-optimizations \
+#     > configure.log 2>&1 || (cat configure.log && exit 1) \
+#     && make -j$(nproc) && make install \
+#     && cd - \
+#     && rm -rf ffmpeg_src
 
 # Add paths and autoload keychain to general profile 
 # and add keyring config which is required by Poetry
@@ -186,20 +188,20 @@ bash -c "cat <<'EOT' >> /etc/profile
 
 export PATH=\${HOME}/.local/bin:/usr/local/cuda/bin:/usr/local/cuda/TensorRT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:
 export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/cuda/lib64:/usr/lib/x86_64-linux-gnu:/usr/lib:
-
-if [[ -f \${HOME}/.ssh/id_rsa ]]; then
-  HOST=\${HOSTNAME}
-  /usr/bin/keychain \${HOME}/.ssh/id_rsa
-  source \${HOME}/.keychain/\${HOST}-sh
-fi
 EOT"
 
-KEYRING_DIR=${HOME}/.config/python_keyring \
-    && mkdir -p ${KEYRING_DIR} \
-    && cat <<EOT > ${KEYRING_DIR}/keyringrc.cfg
-[backend]
-default-keyring=keyring.backends.fail.Keyring
-EOT
+# if [[ -f \${HOME}/.ssh/id_rsa ]]; then
+#   HOST=\${HOSTNAME}
+#   /usr/bin/keychain \${HOME}/.ssh/id_rsa
+#   source \${HOME}/.keychain/\${HOST}-sh
+# fi
+
+# KEYRING_DIR=${HOME}/.config/python_keyring \
+#     && mkdir -p ${KEYRING_DIR} \
+#     && cat <<EOT > ${KEYRING_DIR}/keyringrc.cfg
+# [backend]
+# default-keyring=keyring.backends.fail.Keyring
+# EOT
 
 # Return
 cd ${CURRENT_DIR}
@@ -207,14 +209,15 @@ cd ${CURRENT_DIR}
 rm -rf ${INSTALL_LOCATION}
 
 snap install nvtop
+snap install btop
 
 # Add everything needed to install the workspace
-WORKSPACE=/opt/workspace
-mkdir -p ${WORKSPACE}
-cp ${CURRENT_DIR}/pyproject.toml ${WORKSPACE}/pyproject.toml
-cp ${CURRENT_DIR}/install_venv.sh ${WORKSPACE}/install_venv.sh
-cp ${CURRENT_DIR}/test_torch.sh ${WORKSPACE}/test_torch.sh
-cp ${CURRENT_DIR}/test_tensorflow.sh ${WORKSPACE}/test_tensorflow.sh
+#WORKSPACE=/opt/workspace
+#mkdir -p ${WORKSPACE}
+#cp ${CURRENT_DIR}/pyproject.toml ${WORKSPACE}/pyproject.toml
+#cp ${CURRENT_DIR}/install_venv.sh ${WORKSPACE}/install_venv.sh
+#cp ${CURRENT_DIR}/test_torch.sh ${WORKSPACE}/test_torch.sh
+#cp ${CURRENT_DIR}/test_tensorflow.sh ${WORKSPACE}/test_tensorflow.sh
 
 # TENSORRT_VERSION=$(python3 -c "import tensorflow.compiler as tf_cc; print('.'.join(map(str, tf_cc.tf2tensorrt._pywrap_py_utils.get_linked_tensorrt_version())))" 2> /dev/null) \
 #     && TENSORRT_FILE=$(python3 -c "import tensorrt; print(tensorrt.__file__)" 2>/dev/null) \
